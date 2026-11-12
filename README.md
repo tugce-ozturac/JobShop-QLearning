@@ -8,45 +8,24 @@ Bu projede, esnek üretim sistemlerinde işlerin uygun makinelere dağıtılmas�
 
 Geliştirilen Q-Learning yaklaşımının performansı, geleneksel bir çizelgeleme yöntemi olan EDD (Earliest Due Date) ile karşılaştırılmıştır.
 
-## 2. Kullanılan Teknolojiler
 
-Projenin geliştirilmesinde aşağıdaki araçlardan yararlanılmıştır:
-
-- **Python:** Ortamın ve öğrenme algoritmasının geliştirilmesi.
-- **NumPy:** Sayısal işlemler ve Q değerlerinin tutulması.
-- **Pandas:** Eğitim ve değerlendirme sonuçlarının kaydedilmesi.
-- **Matplotlib:** Performans grafiklerinin oluşturulması.
-- **Streamlit:** Üretim ortamının görsel arayüzünün hazırlanması.
-- **Pickle:** Öğrenilen Q tablosunun dosyaya kaydedilmesi.
-
-## 3. Üretim Ortamının Oluşturulması (Environment)
+## 2. Üretim Ortamının Oluşturulması (Environment)
 
 Proje kapsamında üç makineden oluşan örnek bir üretim ortamı oluşturulmuştur. Her makine belirli kalıp türleriyle uyumlu olacak şekilde tanımlanmıştır.
 
-Üretim ortamında başlangıçta 11 iş bulunmaktadır. Ayrıca simülasyonun 5. zaman adımında sisteme bir acil sipariş eklenmektedir. Böylece toplam iş sayısı 12 olmaktadır.
+Üretim ortamında başlangıçta 11 iş bulunmaktadır. 
 
-İşlerin farklı makinelerde işlenme süreleri ve teslim tarihleri bulunmaktadır. Makinelerin her işi işleyememesi nedeniyle makine-iş uyumluluğu da dikkate alınmıştır.
-
-Ortamda aşağıdaki durumlar modellenmiştir:
-
-- Makinelerin boşta veya çalışıyor olması.
-- İşlerin beklemede veya tamamlanmış olması.
-- İşlerin teslim tarihlerine göre gecikmesi.
-- Makine hazırlık (setup) süreleri.
-- Rastgele makine arızaları.
-- Sisteme sonradan eklenen acil sipariş.
+İşlerin farklı makinelerde işlenme süreleri ve teslim tarihleri bulunmaktadır. 
 
 Makine arızaları belirli bir olasılıkla gerçekleşmekte ve arıza yaşayan makine belirli bir süre üretim yapamamaktadır.
 
-**[EKRAN GÖRÜNTÜSÜ 1: Üretim ortamındaki makineleri ve işleri gösteren kod bölümü]**
-
-## 4. Pekiştirmeli Öğrenme Modelinin Tanımlanması
+## 3. Pekiştirmeli Öğrenme Modelinin Tanımlanması
 
 Projede pekiştirmeli öğrenme yaklaşımı kullanılmıştır. Bu yaklaşımda bir ajan, içinde bulunduğu ortamı gözlemleyerek eylem seçer. Seçtiği eylemin sonucunda bir ödül veya ceza alır ve zaman içerisinde daha iyi kararlar öğrenmeye çalışır.
 
 Bu projede üç temel kavram kullanılmıştır:
 
-### 4.1. State (Durum)
+### 3.1. State (Durum)
 
 State, ajanın üretim ortamının mevcut durumunu anlamak için kullandığı bilgileri temsil etmektedir.
 
@@ -62,20 +41,15 @@ bulunmaktadır.
 
 Son durumda State yapısı 35 elemandan oluşacak şekilde düzenlenmiştir. Böylece ajan, işlerin teslim tarihlerine kalan süreleri de karar verirken dikkate alabilmektedir.
 
-### 4.2. Action (Eylem)
+### 3.2. Action (Eylem)
 
 Action, ajanın üretim ortamında gerçekleştirebileceği işlemleri ifade etmektedir.
 
 Projede toplam 37 eylem tanımlanmıştır:
 
-- İlk 12 eylem: 1. makineye iş atama.
-- Sonraki 12 eylem: 2. makineye iş atama.
-- Sonraki 12 eylem: 3. makineye iş atama.
-- Son eylem: Bekleme.
-
 Ajan yalnızca o anda gerçekleştirilebilecek geçerli eylemler arasından seçim yapmaktadır. Böylece uygun olmayan makineye iş atama gibi geçersiz işlemler engellenmektedir.
 
-### 4.3. Reward (Ödül)
+### 3.3. Reward (Ödül)
 
 Reward, ajanın yaptığı seçimin ne kadar başarılı olduğunu değerlendirmek için kullanılmaktadır.
 
@@ -93,27 +67,13 @@ Projede ödül ve ceza sistemi şu durumlara göre oluşturulmuştur:
 
 Bu ödül sistemiyle ajanın işleri zamanında tamamlaması ve üretim sürecindeki olumsuz durumları azaltması hedeflenmiştir.
 
-**[EKRAN GÖRÜNTÜSÜ 2: State, Action ve Reward tanımlarını gösteren kod bölümleri]**
-
-## 5. Q-Learning Algoritmasının Geliştirilmesi
+## 4. Q-Learning Algoritmasının Geliştirilmesi
 
 Projede kullanılan öğrenme algoritması Q-Learning'dir. Q-Learning, ajanın mevcut durumda hangi eylemi seçmesinin daha faydalı olacağını öğrenmesini sağlayan modelden bağımsız bir pekiştirmeli öğrenme yöntemidir.
 
 Ajan, her durum için mümkün olan 37 eyleme ait Q değerlerini bir tabloda saklamaktadır.
 
 Q değerleri başlangıçta sıfır olarak tanımlanır. Eğitim sırasında ajan eylem seçer, ortamdan ödül alır ve Q tablosunu günceller.
-
-
-Projede kullanılan temel parametreler:
-
-| Parametre | Değer |
-|---|---:|
-| Learning Rate | 0.1 |
-| Discount Factor | 0.95 |
-| Başlangıç Epsilon | 1.0 |
-| Minimum Epsilon | 0.01 |
-| Epsilon Decay | 0.995 |
-| Eylem sayısı | 37 |
 
 Eylem seçiminde Epsilon-Greedy yöntemi kullanılmıştır. Bu yöntemde ajan bazen rastgele bir eylem seçerek yeni seçenekleri keşfeder, bazen de öğrendiği Q değerlerine göre en iyi eylemi tercih eder.
 
@@ -128,8 +88,7 @@ Ajanın 5000 episode boyunca eğitim sürecindeki ödül değişimi aşağıda g
 </p>
 
 
-
-### Epsilon Decay
+### Epsilon Azalım Grafiği
 
 Eğitim boyunca keşif oranının azalması.
 
@@ -138,7 +97,7 @@ Eğitim boyunca keşif oranının azalması.
 </p>
 
 
-### Top Q-Values
+### En Yüksek Q Değerleri
 
 En yüksek Q değerine sahip aksiyon kayıtları.
 
@@ -148,7 +107,7 @@ En yüksek Q değerine sahip aksiyon kayıtları.
 
 
 
-## 6. Modelin Eğitilmesi
+## 5. Modelin Eğitilmesi
 
 Q-Learning ajanı iki farklı eğitim süresiyle test edilmiştir:
 
@@ -157,9 +116,8 @@ Q-Learning ajanı iki farklı eğitim süresiyle test edilmiştir:
 
 Her bölümde üretim ortamı yeniden başlatılmış ve ajan simülasyon tamamlanana kadar kararlar vermiştir. Her bölümün sonunda toplam ödül, tamamlanan iş sayısı, zamanında tamamlanan işler ve toplam gecikme gibi bilgiler kaydedilmiştir.
 
-Eğitim sonunda Q tablosu ve eğitim geçmişi dosyaya kaydedilmiştir.
 
-### 6.1. Eğitim Sonuçları
+### 5.1. Eğitim Sonuçları
 
 | Ölçüt | 1000 Bölüm | 5000 Bölüm |
 |---|---:|---:|
@@ -181,7 +139,7 @@ Eğitim sonunda Q tablosu ve eğitim geçmişi dosyaya kaydedilmiştir.
 </p>
 
 
-## 7. Q-Learning ve EDD Yöntemlerinin Karşılaştırılması
+## 6. Q-Learning ve EDD Yöntemlerinin Karşılaştırılması
 
 Geliştirilen Q-Learning algoritmasının performansını değerlendirmek amacıyla EDD yöntemiyle karşılaştırma yapılmıştır.
 
@@ -189,7 +147,7 @@ EDD (Earliest Due Date), teslim tarihi en yakın olan işin öncelikli olarak se
 
 Karşılaştırmada her iki yaklaşım da 100 değerlendirme bölümü üzerinden test edilmiştir. Aynı değerlendirme koşullarının kullanılmasıyla yöntemlerin performansları karşılaştırılmıştır.
 
-### 7.1. Karşılaştırma Sonuçları
+### 6.1. Karşılaştırma Sonuçları
 
 | Performans Ölçütü | Q-Learning (5000) | EDD |
 |---|---:|---:|
@@ -216,7 +174,7 @@ Q-Learning ve EDD algoritmalarının performans karşılaştırması.
 </p>
 
 
-## 8. Streamlit Arayüzünün Geliştirilmesi
+## 7. Streamlit Arayüzünün Geliştirilmesi
 
 Geliştirilen sistemin daha kolay gözlemlenebilmesi ve simülasyonun görsel olarak takip edilebilmesi amacıyla Streamlit kullanılarak bir arayüz hazırlanmıştır.
 
@@ -246,7 +204,7 @@ Bu arayüz sayesinde üretim ortamındaki değişiklikler ve Q-Learning ajanın�
 </p>
 
 
-## 9. Genel Değerlendirme ve Sonuç
+## 8. Genel Değerlendirme ve Sonuç
 
 Bu projede, esnek üretim hücrelerinde dinamik iş çizelgeleme problemi pekiştirmeli öğrenme yaklaşımıyla ele alınmıştır. Üç makine ve toplam 12 işten oluşan örnek bir üretim ortamı oluşturulmuş; makine arızaları ve acil sipariş gibi değişken durumlar sisteme eklenmiştir.
 
